@@ -27,7 +27,7 @@ echo "  A $(cat /tmp/ipAddressDetect)" > /tmp/ipAddressDetectARecord
 
 # Copy example files if no zones are defined
 if [ $( ls /data/zones | wc -l) -eq 0 ]; then
-    cp /etc/templates/exampleZone.* /data
+    cp /etc/templates/exampleZone.* /data/zones
 fi
 
 badZone=false
