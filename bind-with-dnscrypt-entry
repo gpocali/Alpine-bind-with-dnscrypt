@@ -1,0 +1,94 @@
+#!/bin/ash
+# ISC BIND with DNScrypt Proxy Entry File
+
+echo $(date) - Starting ISC BIND with DNScrypt Proxy
+
+if [ ! -e /data/named.conf ]; then
+    cp /etc/templates/named.conf.recursive /data/named.conf
+fi
+
+if [ ! -e /data/zones ]; then
+    mkdir /data/zones
+fi
+
+if [ ! -e /data/rndc ]; then
+    mkdir /data/rndc
+fi
+
+if [ ! -e /data/rndc/rndc.key ]; then
+    rndc-confgen | head -n 5 > /data/rndc/rndc.key
+fi
+
+# Add local address for listen address
+echo "$(ip addr | grep eth0 | grep inet | grep -v inet6 | awk '{print $2}' | cut -d/ -f1 | head -n 1);" > /tmp/ipAddressDetect
+
+# Create A Name from local address
+echo "  A $(cat /tmp/ipAddressDetect)" > /tmp/ipAddressDetectARecord
+
+# Copy example files if no zones are defined
+if [ $( ls /data/zones | wc -l) -eq 0 ]; then
+    cp /etc/templates/exampleZone.* /data
+fi
+
+badZone=false
+for name in $(ls /data/zones); do 
+    named-checkzone $(cat /data/zones/$name | grep SOA | grep IN | grep "(" | awk '{print $1'}) /data/zones/$name
+    if [ $? -ne 0 ]; then 
+        echo Zone $name configuration error.
+        badZone=true
+    else
+        if [ $(echo $name | grep "in-addr.arpa" | wc -l) -eq 1 ]; then
+            echo "zone \"$name\" {
+  type master;
+  notify no;
+  file \"/data/zones/$name\";
+  allow-update { key rndc-key; };
+};
+" >> /tmp/named.conf.zones
+        else
+            echo "zone \"$name\" {
+  type master;
+  file \"/data/zones/name\";
+  allow-update { key rndc-key; };
+};
+" >> /tmp/named.conf.zones
+            if [ $(grep internal /data/zones/* | grep "in-addr.arpa" | wc -l) -eq 0 ]; then
+                echo "Warning: Zone '$name' does not have a reverse lookup zone defined."
+            fi
+        fi
+    fi
+done
+if [ $badZone ]; then
+    echo There are errors in your zone configuration files.  Startup aborted.
+    exit 1
+fi
+
+if [ ! -e /data/named.conf.zones ]; then
+    cp /tmp/named.conf.zones /data/named.conf.zones
+fi
+
+/usr/sbin/named-checkconf /data/named.conf
+if [ $? -eq 0 ]; then
+    echo Configuration check successful.
+else
+    echo Configuration check failed. Startup aborted.
+    exit 1
+fi
+
+nohup /usr/sbin/named -c /data/named.conf -f -g
+
+if [ ! -e /data/dnscrypt-proxy.toml ]; then
+    cp /etc/templates/dnscrypt-proxy.toml /data/dnscrypt-proxy.toml
+fi
+
+/usr/bin/dnscrypt-proxy -config /data/dnscrypt-proxy.toml -check
+if [ $? -eq 0 ]; then
+    echo Configuration check successful.
+else
+    echo Configuration check failed. Startup aborted.
+    exit 1
+fi
+
+/usr/bin/dnscrypt-proxy -config /data/dnscrypt-proxy.toml
+
+exit 0
