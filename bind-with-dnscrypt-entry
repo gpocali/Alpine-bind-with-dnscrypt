@@ -67,6 +67,14 @@ if [ ! -e /data/named.conf.zones ]; then
     cp /tmp/named.conf.zones /data/named.conf.zones
 fi
 
+if [ ! -e /data/named.conf.config ]; then
+    cp /tmp/named.conf.config /data/named.conf.config
+fi
+
+if [ ! -e /data/named.conf.control ]; then
+    cp /tmp/named.conf.control /data/named.conf.control
+fi
+
 /usr/sbin/named-checkconf /data/named.conf
 if [ $? -eq 0 ]; then
     echo Configuration check successful.
