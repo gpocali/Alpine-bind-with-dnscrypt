@@ -19,11 +19,11 @@ if [ ! -e /data/rndc/rndc.key ]; then
     rndc-confgen | head -n 5 > /data/rndc/rndc.key
 fi
 
-# Add local address for listen address
-echo "$(ip addr | grep eth0 | grep inet | grep -v inet6 | awk '{print $2}' | cut -d/ -f1 | head -n 1);" > /tmp/ipAddressDetect
+# Detect local address for listen address
+echo -e "listen-on {\n$(ip addr | grep inet | grep -v inet6 | awk '{print $2}' | cut -d/ -f1 | sed 's/$/;/' | sed 's/^/\t/')\n};" > /tmp/listenIpAddressDetect
 
-# Create A Name from local address
-echo "  A $(cat /tmp/ipAddressDetect)" > /tmp/ipAddressDetectARecord
+# Detect IPs for Control
+echo -e "include /data/rndc/rndc.conf;\ncontrols {\n\tinet 127.0.0.1 port 953 allow {\n$(ip addr | grep inet | grep -v inet6 | awk '{print $2}' | cut -d/ -f1 | sed 's/$/;/' | sed 's/^/\t\t/')\n\t} keys { \"rndc-key\"; };\n};" > /tmp/named.conf.control
 
 # Copy example files if no zones are defined
 if [ $( ls /data/zones | wc -l) -eq 0 ]; then
