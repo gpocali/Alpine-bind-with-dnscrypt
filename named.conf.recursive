@@ -70,4 +70,4 @@ zone "127.in-addr.arpa" IN {
 
 include "/tmp/named.conf.control";
 
-include "/data/named.conf.zones";
+include "/tmp/named.conf.zones";
