@@ -21,5 +21,10 @@
  -- named.conf.zones will not be replaced if it is modified
  -- To automatically regenerate the file, delete it and restart the docker container
  
+## Logging
+ - To enable query logging, set the following environmental variable
+ -- DNS_LOGGING=true
+ - This is dynamic at runtime and will store logs to /data/log directory
+ 
 ## Disclaimer
  This docker is not designed to be an anonymous nor to be a template of security for secure systems or sensitive data.  You are responsible for your own configuration and implementation of this docker.
