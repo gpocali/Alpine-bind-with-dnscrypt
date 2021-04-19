@@ -38,6 +38,8 @@
 
 include "/data/named.conf.config";
 
+include "/data/named.conf.logging";
+
 // Briefly, a zone which has been declared delegation-only will be effectively
 // limited to containing NS RRs for subdomains, but no actual data beyond its
 // own apex (for example, its SOA RR and apex NS RRset). This can be used to

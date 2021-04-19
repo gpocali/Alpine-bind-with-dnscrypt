@@ -31,7 +31,7 @@ if [ ! -e /data/names.conf/config ]; then
         // queries to the DNS server. Do NOT specify 0.0.0.0/0 here; see above.
         allow-recursion {
                 127.0.0.1/32;
-                $(for i in $(route | tail -n +3 | grep -v default | awk '{print $1"-"$3}'); do echo -n $(echo $i | cut -d"-" -f1); IPprefix_by_netmask $(echo $i | cut -d"-" -f2); echo ";"; done)
+$(for i in $(route | tail -n +3 | grep -v default | awk '{print $1"-"$3}'); do echo -n "\t\t\t\t$(echo $i | cut -d"-" -f1)"; IPprefix_by_netmask $(echo $i | cut -d"-" -f2); echo ";"; done)
         };
         
         // If you have problems and are behind a firewall:
@@ -61,11 +61,46 @@ if [ ! -e /data/named.conf.control ]; then
     echo -e "include \"/data/rndc/rndc.key\";\ncontrols {\n\tinet 127.0.0.1 port 953 allow {\n$(ip addr | grep inet | grep -v inet6 | awk '{print $2}' | cut -d/ -f1 | sed 's/$/;/' | sed 's/^/\t\t/')\n\t} keys { \"rndc-key\"; };\n};" > /data/named.conf.control
 fi
 
-# Copy example files if no zones are defined
+# Generate Example Zone Files If No Zones Are Defined
 if [ $( ls /data/zones | wc -l) -eq 0 ]; then
-    cp /etc/templates/exampleZone.* /data/zones
+echo "$ORIGIN .
+$TTL 604800             ; 1 week
+internal           IN SOA internal. root.internal. (
+        1          ; serial
+        604800     ; refresh (1 week)
+        86400      ; retry (1 day)
+        2419200    ; expire (4 weeks)
+        604800     ; minimum (1 week)
+)
+NS      internal.
+A       $(ip addr | grep inet | grep eth0 | awk '{print $2}' | cut -d/ -f1)
+
+$ORIGIN internal.
+$TTL 600
+router  A       $(route | grep default | awk '{print $2}')
+" > /data/zones/exampleZone.internal
+
+echo "$ORIGIN .
+$TTL 604800     ; 1 week
+$(ip addr | grep inet | grep eth0 | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa           IN SOA  internal. root.internal. (
+                                        1          ; serial
+                                        604800     ; refresh (1 week)
+                                        86400      ; retry (1 day)
+                                        2419200    ; expire (4 weeks)
+                                        604800     ; minimum (1 week)
+                                        )
+                        NS      internal.
+                        A       $(ip addr | grep inet | grep eth0 | awk '{print $2}' | cut -d/ -f1)
+
+$ORIGIN $(ip addr | grep inet | grep eth0 | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa.
+$TTL 600       ;
+
+$(route | grep default | awk '{print $2}' | cut -d. -f4)    PTR    router.internal.
+" > /data/zones/exampleZone.$(ip addr | grep inet | grep eth0 | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa
+
 fi
 
+echo "" > /tmp/named.conf.zones
 badZone=0
 for name in $(ls /data/zones); do 
     named-checkzone $(cat /data/zones/$name | grep SOA | grep IN | grep "(" | awk '{print $1'}) /data/zones/$name
@@ -103,6 +138,21 @@ if [ ! -e /data/named.conf.zones ]; then
     cp /tmp/named.conf.zones /data/named.conf.zones
 fi
 
+
+if [ $DNS_LOGGING == "true" ]; then
+    if [ ! -e /data/log/ ]; then
+        mkdir /data/log/
+    fi
+    echo "logging {
+    channel querylog {
+        file \"/data/log/bind-querylog.log\";
+        severity debug 5;
+    };
+};" > /tmp/named.conf.logging
+else
+    echo "" > /tmp/named.conf.logging
+fi
+
 /usr/sbin/named-checkconf /data/named.conf
 if [ $? -eq 0 ]; then
     echo Configuration check successful.
@@ -124,7 +174,10 @@ else
 fi
 
 # Launch
-/usr/bin/dnscrypt-proxy -config /data/dnscrypt-proxy.toml &
+if [ $DNS_LOGGING == "true" ]; then
+    dnscrypt_logging="-logfile /data/log/dnscrypt.log -loglevel 5"
+fi
+/usr/bin/dnscrypt-proxy -config /data/dnscrypt-proxy.toml $dnscrypt_logging &
 
 /usr/sbin/named -c /data/named.conf -f -g
 
