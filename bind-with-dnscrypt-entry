@@ -68,11 +68,11 @@ if [ ! -e /data/named.conf.zones ]; then
 fi
 
 if [ ! -e /data/named.conf.config ]; then
-    cp /tmp/named.conf.config /data/named.conf.config
+    cp /etc/templates/named.conf.config /data/named.conf.config
 fi
 
 if [ ! -e /data/named.conf.control ]; then
-    cp /tmp/named.conf.control /data/named.conf.control
+    cp /etc/templates/named.conf.control /data/named.conf.control
 fi
 
 /usr/sbin/named-checkconf /data/named.conf
