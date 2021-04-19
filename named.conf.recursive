@@ -68,6 +68,6 @@ zone "127.in-addr.arpa" IN {
         notify no;
 };
 
-include "/tmp/named.conf.control";
+include "/data/named.conf.control";
 
-include "/tmp/named.conf.zones";
+include "/data/named.conf.zones";
