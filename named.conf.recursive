@@ -36,7 +36,7 @@
 // This is a complex issue and some level of understanding of these attacks is
 // advisable before you attempt to configure a resolver.
 
-include /data/named.conf.config
+include "/data/named.conf.config"
 
 // Briefly, a zone which has been declared delegation-only will be effectively
 // limited to containing NS RRs for subdomains, but no actual data beyond its
@@ -68,6 +68,6 @@ zone "127.in-addr.arpa" IN {
         notify no;
 };
 
-include /data/named.conf.control
+include "/data/named.conf.control"
 
-include /data/named.conf.zones
+include "/data/named.conf.zones"

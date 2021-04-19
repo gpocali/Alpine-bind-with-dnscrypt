@@ -2,6 +2,6 @@ include /data/rndc/rndc.conf;
 controls {
   inet 127.0.0.1 port 953 allow {
     127.0.0.1;
-    include /tmp/ipAddressDetect;
+    include "/tmp/ipAddressDetect";
   } keys { "rndc-key"; }; #We can now refer to the key with this variable
 };
