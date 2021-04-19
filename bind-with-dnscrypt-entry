@@ -23,7 +23,7 @@ fi
 echo -e "listen-on {\n$(ip addr | grep inet | grep -v inet6 | awk '{print $2}' | cut -d/ -f1 | sed 's/$/;/' | sed 's/^/\t/')\n};" > /tmp/listenIpAddressDetect
 
 # Detect IPs for Control
-echo -e "include /data/rndc/rndc.conf;\ncontrols {\n\tinet 127.0.0.1 port 953 allow {\n$(ip addr | grep inet | grep -v inet6 | awk '{print $2}' | cut -d/ -f1 | sed 's/$/;/' | sed 's/^/\t\t/')\n\t} keys { \"rndc-key\"; };\n};" > /tmp/named.conf.control
+echo -e "include \"/data/rndc/rndc.conf\";\ncontrols {\n\tinet 127.0.0.1 port 953 allow {\n$(ip addr | grep inet | grep -v inet6 | awk '{print $2}' | cut -d/ -f1 | sed 's/$/;/' | sed 's/^/\t\t/')\n\t} keys { \"rndc-key\"; };\n};" > /tmp/named.conf.control
 
 # Copy example files if no zones are defined
 if [ $( ls /data/zones | wc -l) -eq 0 ]; then
@@ -69,10 +69,6 @@ fi
 
 if [ ! -e /data/named.conf.config ]; then
     cp /etc/templates/named.conf.config /data/named.conf.config
-fi
-
-if [ ! -e /data/named.conf.control ]; then
-    cp /etc/templates/named.conf.control /data/named.conf.control
 fi
 
 /usr/sbin/named-checkconf /data/named.conf
