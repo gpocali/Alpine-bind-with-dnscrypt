@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-RUN apk add bind
+RUN apk add bind dnscrypt-proxy
 
 RUN mkdir /data
 
