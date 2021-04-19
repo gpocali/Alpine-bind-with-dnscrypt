@@ -48,7 +48,7 @@ for name in $(ls /data/zones); do
         else
             echo "zone \"$name\" {
   type master;
-  file \"/data/zones/name\";
+  file \"/data/zones/$name\";
   allow-update { key rndc-key; };
 };
 " >> /tmp/named.conf.zones
@@ -79,8 +79,6 @@ else
     exit 1
 fi
 
-nohup /usr/sbin/named -c /data/named.conf -f -g
-
 if [ ! -e /data/dnscrypt-proxy.toml ]; then
     cp /etc/templates/dnscrypt-proxy.toml /data/dnscrypt-proxy.toml
 fi
@@ -93,6 +91,9 @@ else
     exit 1
 fi
 
-/usr/bin/dnscrypt-proxy -config /data/dnscrypt-proxy.toml
+# Launch
+/usr/bin/dnscrypt-proxy -config /data/dnscrypt-proxy.toml &
+
+/usr/sbin/named -c /data/named.conf -f -g
 
 exit 0
