@@ -1,16 +1,16 @@
+$ORIGIN .
 $TTL 604800     ; 1 week
-@           IN SOA  internal. root.internal. (
-					1          ; serial
-					604800     ; refresh (1 week)
-					86400      ; retry (1 day)
-					2419200    ; expire (4 weeks)
-					604800     ; minimum (1 week)
-					)
-			NS      internal.
-			NS      localhost.
-			$INCLUDE /tmp/ipAddressDetectARecord
+168.192.in-addr.arpa           IN SOA  internal. root.internal. (
+                                        1          ; serial
+                                        604800     ; refresh (1 week)
+                                        86400      ; retry (1 day)
+                                        2419200    ; expire (4 weeks)
+                                        604800     ; minimum (1 week)
+                                        )
+                        NS      internal.
+                        A       127.0.0.1
 
 $ORIGIN 1.168.192.in-addr.arpa.
-$TTL 600       ; 
+$TTL 600       ;
 
 1    PTR    router.internal.
