@@ -1,6 +1,5 @@
-$ORIGIN .
 $TTL 604800     ; 1 week
-168.192.in-addr.arpa    IN SOA  internal. root.internal. (
+@           IN SOA  internal. root.internal. (
 					1          ; serial
 					604800     ; refresh (1 week)
 					86400      ; retry (1 day)
@@ -15,4 +14,3 @@ $ORIGIN 1.168.192.in-addr.arpa.
 $TTL 600       ; 
 
 1    PTR    router.internal.
-
