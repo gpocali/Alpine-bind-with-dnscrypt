@@ -63,8 +63,8 @@ fi
 
 # Generate Example Zone Files If No Zones Are Defined
 if [ $( ls /data/zones | wc -l) -eq 0 ]; then
-echo "$ORIGIN .
-$TTL 604800             ; 1 week
+echo "\$ORIGIN .
+\$TTL 604800             ; 1 week
 internal           IN SOA internal. root.internal. (
         1          ; serial
         604800     ; refresh (1 week)
@@ -72,31 +72,31 @@ internal           IN SOA internal. root.internal. (
         2419200    ; expire (4 weeks)
         604800     ; minimum (1 week)
 )
-NS      internal.
-A       $(ip addr | grep inet | grep eth0 | awk '{print $2}' | cut -d/ -f1)
+    NS      internal.
+    A       $(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1)
 
-$ORIGIN internal.
-$TTL 600
+\$ORIGIN internal.
+\$TTL 600
 router  A       $(route | grep default | awk '{print $2}')
 " > /data/zones/exampleZone.internal
 
-echo "$ORIGIN .
-$TTL 604800     ; 1 week
-$(ip addr | grep inet | grep eth0 | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa           IN SOA  internal. root.internal. (
-                                        1          ; serial
-                                        604800     ; refresh (1 week)
-                                        86400      ; retry (1 day)
-                                        2419200    ; expire (4 weeks)
-                                        604800     ; minimum (1 week)
-                                        )
-                        NS      internal.
-                        A       $(ip addr | grep inet | grep eth0 | awk '{print $2}' | cut -d/ -f1)
+echo "\$ORIGIN .
+\$TTL 604800     ; 1 week
+$(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa           IN SOA  internal. root.internal. (
+        1          ; serial
+        604800     ; refresh (1 week)
+        86400      ; retry (1 day)
+        2419200    ; expire (4 weeks)
+        604800     ; minimum (1 week)
+)
+    NS      internal.
+    A       $(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1)
 
-$ORIGIN $(ip addr | grep inet | grep eth0 | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa.
-$TTL 600       ;
+\$ORIGIN $(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa.
+\$TTL 600       ;
 
 $(route | grep default | awk '{print $2}' | cut -d. -f4)    PTR    router.internal.
-" > /data/zones/exampleZone.$(ip addr | grep inet | grep eth0 | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa
+" > /data/zones/exampleZone.$(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa
 
 fi
 

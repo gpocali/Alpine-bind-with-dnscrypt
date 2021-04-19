@@ -20,6 +20,7 @@
  -- If no zone file exists in /data, a zone file will be generated based on the contents of the zone folder but will not generate if there are errors in your zone files
  -- named.conf.zones will not be replaced if it is modified
  -- To automatically regenerate the file, delete it and restart the docker container
+ -- The example zone files will be created using the network information for the default network connection
  
 ## Logging
  - To enable query logging, set the following environmental variable
