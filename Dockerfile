@@ -7,6 +7,7 @@ RUN mkdir /data
 RUN mkdir /etc/templates
 
 COPY ./named.conf.recursive /etc/templates/named.conf.recursive
+COPY ./named.conf.logging /etc/templates/named.conf.logging
 
 COPY ./dnscrypt-proxy.toml /etc/templates/dnscrypt-proxy.toml
 

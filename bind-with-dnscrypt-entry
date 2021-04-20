@@ -142,12 +142,6 @@ fi
 if [ ! -e /data/log/ ]; then
     mkdir /data/log/
 fi
-echo "logging {
-    channel querylog {
-        file \"/data/log/bind-querylog.log\";
-        severity debug 1;
-    };
-};" > /tmp/named.conf.logging
 
 /usr/sbin/named-checkconf /data/named.conf
 if [ $? -eq 0 ]; then

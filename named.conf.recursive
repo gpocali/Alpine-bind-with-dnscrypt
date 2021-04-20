@@ -38,7 +38,7 @@
 
 include "/data/named.conf.config";
 
-include "/tmp/named.conf.logging";
+include "/data/named.conf.logging";
 
 // Briefly, a zone which has been declared delegation-only will be effectively
 // limited to containing NS RRs for subdomains, but no actual data beyond its
