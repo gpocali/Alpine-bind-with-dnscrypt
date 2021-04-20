@@ -78,7 +78,7 @@ internal           IN SOA internal. root.internal. (
 \$ORIGIN internal.
 \$TTL 600
 router  A       $(route | grep default | awk '{print $2}')
-" > /data/zones/exampleZone.internal
+" > /data/zones/internal
 
 echo "\$ORIGIN .
 \$TTL 604800     ; 1 week
@@ -96,7 +96,7 @@ $(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{
 \$TTL 600       ;
 
 $(route | grep default | awk '{print $2}' | cut -d. -f4)    PTR    router.internal.
-" > /data/zones/exampleZone.$(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa
+" > /data/zones/$(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa
 
 fi
 
