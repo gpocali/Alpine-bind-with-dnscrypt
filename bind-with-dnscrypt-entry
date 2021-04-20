@@ -170,6 +170,6 @@ fi
 # Launch
 /usr/bin/dnscrypt-proxy -config /data/dnscrypt-proxy.toml &
 
-/usr/sbin/named -c /data/named.conf -f -g
+/usr/sbin/named -c /data/named.conf -f
 
 exit 0

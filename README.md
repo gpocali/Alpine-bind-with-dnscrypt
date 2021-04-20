@@ -13,14 +13,14 @@
 
 ## Notes
  - If RNDC file does not exist, a new file will be generated at launch
- -- RNDC file is located at /data/rndc/rndc.conf so that it can be shared with other docker containers
+  - RNDC file is located at /data/rndc/rndc.conf so that it can be shared with other docker containers
  - Logging
- -- Some logs are enabled by default for the local instance and are stored locally in the /data/log directory
+  - Some logs are enabled by default for the local instance and are stored locally in the /data/log directory
  - named.conf.zones
- -- If no zone file exists in /data, a zone file will be generated based on the contents of the zone folder but will not generate if there are errors in your zone files
- -- named.conf.zones will not be replaced if it is modified
- -- To automatically regenerate the file, delete it and restart the docker container
- -- The example zone files will be created using the network information for the default network connection
+  - If no zone file exists in /data, a zone file will be generated based on the contents of the zone folder but will not generate if there are errors in your zone files
+  - named.conf.zones will not be replaced if it is modified
+  - To automatically regenerate the file, delete it and restart the docker container
+  - The example zone files will be created using the network information for the default network connection
  
 ## Disclaimer
  This docker is not designed to be an anonymous nor to be a template of security for secure systems or sensitive data.  You are responsible for your own configuration and implementation of this docker.
