@@ -143,6 +143,10 @@ if [ ! -e /data/log/ ]; then
     mkdir /data/log/
 fi
 
+if [ ! -e /data/named.conf.logging ]; then
+    cp /etc/templates/named.conf.logging /data/named.conf.logging
+fi
+
 /usr/sbin/named-checkconf /data/named.conf
 if [ $? -eq 0 ]; then
     echo Configuration check successful.
