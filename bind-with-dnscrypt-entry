@@ -139,19 +139,15 @@ if [ ! -e /data/named.conf.zones ]; then
 fi
 
 
-if [ $DNS_LOGGING == "true" ]; then
-    if [ ! -e /data/log/ ]; then
-        mkdir /data/log/
-    fi
-    echo "logging {
+if [ ! -e /data/log/ ]; then
+    mkdir /data/log/
+fi
+echo "logging {
     channel querylog {
         file \"/data/log/bind-querylog.log\";
-        severity debug 5;
+        severity debug 1;
     };
 };" > /tmp/named.conf.logging
-else
-    echo "" > /tmp/named.conf.logging
-fi
 
 /usr/sbin/named-checkconf /data/named.conf
 if [ $? -eq 0 ]; then
@@ -174,10 +170,7 @@ else
 fi
 
 # Launch
-if [ $DNS_LOGGING == "true" ]; then
-    dnscrypt_logging="-logfile /data/log/dnscrypt.log -loglevel 5"
-fi
-/usr/bin/dnscrypt-proxy -config /data/dnscrypt-proxy.toml $dnscrypt_logging &
+/usr/bin/dnscrypt-proxy -config /data/dnscrypt-proxy.toml &
 
 /usr/sbin/named -c /data/named.conf -f -g
 
