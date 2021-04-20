@@ -73,7 +73,7 @@ internal           IN SOA internal. root.internal. (
         604800     ; minimum (1 week)
 )
     NS      internal.
-    A       $(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1)
+    A       $(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1 | head -n 1)
 
 \$ORIGIN internal.
 \$TTL 600
@@ -82,7 +82,7 @@ router  A       $(route | grep default | awk '{print $2}')
 
 echo "\$ORIGIN .
 \$TTL 604800     ; 1 week
-$(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa           IN SOA  internal. root.internal. (
+$(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}' | head -n 1).in-addr.arpa           IN SOA  internal. root.internal. (
         1          ; serial
         604800     ; refresh (1 week)
         86400      ; retry (1 day)
@@ -90,13 +90,13 @@ $(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{
         604800     ; minimum (1 week)
 )
     NS      internal.
-    A       $(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1)
+    A       $(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1 | head -n 1)
 
-\$ORIGIN $(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa.
+\$ORIGIN $(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}' | head -n 1).in-addr.arpa.
 \$TTL 600       ;
 
 $(route | grep default | awk '{print $2}' | cut -d. -f4)    PTR    router.internal.
-" > /data/zones/$(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}').in-addr.arpa
+" > /data/zones/$(ip addr | grep inet | grep $(route | grep default | awk '{print $8}') | awk '{print $2}' | cut -d/ -f1 | awk -F"." '{print $3"."$2"."$1}' | head -n 1).in-addr.arpa
 
 fi
 
