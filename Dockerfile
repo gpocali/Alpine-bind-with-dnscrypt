@@ -17,6 +17,6 @@ RUN chmod +x /bin/bind-with-dnscrypt-entry
 
 EXPOSE 53
 
-VOLUMES /data
+VOLUME /data
 
 ENTRYPOINT ["/bin/bind-with-dnscrypt-entry"]
