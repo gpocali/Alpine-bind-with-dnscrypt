@@ -15,7 +15,8 @@ COPY ./bind-with-dnscrypt-entry /bin/bind-with-dnscrypt-entry
 
 RUN chmod +x /bin/bind-with-dnscrypt-entry
 
-EXPOSE 53
+EXPOSE 53/UDP
+EXPOSE 53/TCP
 
 VOLUME /data
 
