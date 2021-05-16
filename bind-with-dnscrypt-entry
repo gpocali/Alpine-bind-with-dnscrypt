@@ -186,7 +186,7 @@ zoneChange () {
 inotifywait -m -e close_write /data/zones | while read path action file; do 
     zoneChange
     if [ $badZone -eq 0 ]; then
-        ifrndc -k /data/rndc/rndc.key reconfig && echo "$(date) - Reloaded due to change in '$file'" || echo "$(date) - Reload Failed after change in '$file'"
+        rndc -k /data/rndc/rndc.key reconfig && echo "$(date) - Reloaded due to change in '$file'" || echo "$(date) - Reload Failed after change in '$file'"
     else
         echo $(date) - Reload aborted due to Zone File errors.
     fi
