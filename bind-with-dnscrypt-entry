@@ -172,7 +172,6 @@ fi
 
 /usr/sbin/named -c /data/named.conf
 
-inotifywait -m -e close_write /data/zones | while read path action file; do rndc -k /data/rndc/rndc.key reconf
-ig && echo "$(date) - Reloaded due to change in '$file'" || echo "$(date) - Reload Failed after change in '$file'"; done
+inotifywait -m -e close_write /data/zones | while read path action file; do rndc -k /data/rndc/rndc.key reconfig && echo "$(date) - Reloaded due to change in '$file'" || echo "$(date) - Reload Failed after change in '$file'"; done
 
 exit 0
