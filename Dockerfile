@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-RUN apk add bind dnscrypt-proxy inotify-tools
+RUN apk add bind dnscrypt-proxy inotify-tools tzdata
 
 RUN mkdir /data
 
