@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-RUN apk add bind dnscrypt-proxy
+RUN apk add bind dnscrypt-proxy inotify-tools
 
 RUN mkdir /data
 
@@ -14,5 +14,9 @@ COPY ./dnscrypt-proxy.toml /etc/templates/dnscrypt-proxy.toml
 COPY ./bind-with-dnscrypt-entry /bin/bind-with-dnscrypt-entry
 
 RUN chmod +x /bin/bind-with-dnscrypt-entry
+
+EXPOSE 53
+
+VOLUMES /data
 
 ENTRYPOINT ["/bin/bind-with-dnscrypt-entry"]

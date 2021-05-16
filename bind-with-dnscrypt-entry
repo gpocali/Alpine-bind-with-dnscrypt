@@ -170,6 +170,9 @@ fi
 # Launch
 /usr/bin/dnscrypt-proxy -config /data/dnscrypt-proxy.toml &
 
-/usr/sbin/named -c /data/named.conf -f
+/usr/sbin/named -c /data/named.conf
+
+inotifywait -m -e close_write /data/zones | while read path action file; do rndc -k /data/rndc/rndc.key reconf
+ig && echo "$(date) - Reloaded due to change in '$file'" || echo "$(date) - Reload Failed after change in '$file'"; done
 
 exit 0
