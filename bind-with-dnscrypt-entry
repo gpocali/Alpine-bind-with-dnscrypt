@@ -167,11 +167,29 @@ else
     exit 1
 fi
 
+zoneChange () {
+    badZone=0
+    for name in $(ls /data/zones); do 
+        named-checkzone $(cat /data/zones/$name | grep SOA | grep IN | grep "(" | awk '{print $1'}) /data/zones/$name
+        if [ $? -ne 0 ]; then 
+            echo Zone $name configuration error.
+            badZone=1
+        fi
+    done
+}
+
 # Launch
 /usr/bin/dnscrypt-proxy -config /data/dnscrypt-proxy.toml &
 
 /usr/sbin/named -c /data/named.conf
 
-inotifywait -m -e close_write /data/zones | while read path action file; do rndc -k /data/rndc/rndc.key reconfig && echo "$(date) - Reloaded due to change in '$file'" || echo "$(date) - Reload Failed after change in '$file'"; done
+inotifywait -m -e close_write /data/zones | while read path action file; do 
+    zoneChange
+    if [ $badZone -eq 0 ]; then
+        ifrndc -k /data/rndc/rndc.key reconfig && echo "$(date) - Reloaded due to change in '$file'" || echo "$(date) - Reload Failed after change in '$file'"
+    else
+        echo $(date) - Reload aborted due to Zone File errors.
+    fi
+done
 
 exit 0
